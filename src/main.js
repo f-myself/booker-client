@@ -7,8 +7,39 @@ import router from './router'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faUserSecret } from '@fortawesome/free-solid-svg-icons'
+import { faUser } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+library.add(faUserSecret, faUser)
+Vue.component('font-awesome-icon', FontAwesomeIcon)
+
 Vue.use(BootstrapVue)
 Vue.config.productionTip = false
+
+router.beforeEach((to, from, next) => {
+  
+  let id = localStorage.getItem("id");
+  let token = localStorage.getItem("token");
+  let login = localStorage.getItem("login");
+
+  if(id && token && login){
+    to.meta.login = true
+    next()
+  }else{
+    if(to.path != '/'){
+      to.meta.login = false	
+      next('/')
+    }else{
+      next()
+    }
+  }
+
+  if (to.meta.login && to.path == '/'){
+    next('/calendar')
+  }
+})
 
 /* eslint-disable no-new */
 new Vue({

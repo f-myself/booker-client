@@ -71,6 +71,8 @@ export default {
             localStorage.setItem("token", data.token);
             localStorage.setItem("role", data.role);
             this.$router.push('/calendar');
+
+            this.$emit("logSuc");
             break;
             
           case 'no_user':

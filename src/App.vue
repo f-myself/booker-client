@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="container">
-      <navBar />
+      <navBar v-if="login" />
       <router-view></router-view>
     </div>
   </div>
@@ -14,6 +14,22 @@ export default {
   name: 'app',
   components: {
     navBar
+  },
+  data: () => {
+    return {
+      login: false
+    }
+  },
+  methods: {
+    loginChange: function(){
+      console.log("inited");
+        this.login = true;
+    }
+  },
+  created: function() {
+    this.$on("logSuc", function() {
+      console.log("it's worked!");
+    })
   }
 }
 </script>

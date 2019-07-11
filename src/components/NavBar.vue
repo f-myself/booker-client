@@ -21,7 +21,7 @@
                 <!-- Using 'button-content' slot -->
                 <template slot="button-content" class="white">Hello, <font-awesome-icon icon="user" /> {{username}}</template>
                 <b-dropdown-item href="#">Profile</b-dropdown-item>
-                <b-dropdown-item href="#">Sign Out</b-dropdown-item>
+                <b-dropdown-item @click="logout" href="#">Sign Out</b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
             </b-collapse>
@@ -34,7 +34,36 @@ export default {
     name: "adminBar",
     data: () => {
         return {
-            username: localStorage.getItem("login")
+            username: localStorage.getItem("login"),
+            logoutData: {
+                id: localStorage.getItem("id"),
+                operation: ""
+            }
+        }
+    },
+    methods: {
+        dataToParamString: function (data){
+      
+            this.logoutData.operation = "logout";
+      
+	        var string= '';
+	        for(let val in data){
+		        string += val + '=' + encodeURIComponent(data[val]) + '&' 
+	        }
+  	        return string;
+        },
+
+        logout: function(){
+            localStorage.clear();
+            let str = this.dataToParamString(this.logoutData);
+
+
+            // fetch('api/auth/', 
+            // fetch('http://booker.loc/Server/app/api/auth/', 
+            fetch('http://192.168.0.15/~user6/booker/Server/app/api/auth/', 
+            {method: "PUT",  body: str})
+            
+            location.reload();
         }
     }
     

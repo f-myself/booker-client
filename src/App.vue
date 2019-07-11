@@ -2,7 +2,7 @@
   <div id="app">
     <div class="container">
       <navBar v-if="login" />
-      <router-view></router-view>
+      <router-view @logSuc="loginChange()"></router-view>
     </div>
   </div>
 </template>
@@ -27,9 +27,9 @@ export default {
     }
   },
   created: function() {
-    this.$on("logSuc", function() {
-      console.log("it's worked!");
-    })
+    if (localStorage.getItem("id")){
+      this.login = true;
+    }
   }
 }
 </script>

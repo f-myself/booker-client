@@ -10,10 +10,11 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUserSecret } from '@fortawesome/free-solid-svg-icons'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
+import { faCalendarAlt } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-library.add(faUserSecret, faUser)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
+library.add(faUserSecret, faUser, faCalendarAlt)
 
 Vue.use(BootstrapVue)
 Vue.config.productionTip = false

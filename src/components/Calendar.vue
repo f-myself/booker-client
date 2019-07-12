@@ -11,13 +11,6 @@
                     </tr>
                     <tr class="week-days">
                         <td :key="index" v-for="(weekDay, index) in week">{{weekDay}}</td>
-                        <!-- <td>Mon</td>
-                        <td>Tue</td>
-                        <td>Wed</td>
-                        <td>Thu</td>
-                        <td>Fri</td>
-                        <td>Sat</td>
-                        <td>Sun</td> -->
                     </tr>
                 </thead>
                 <tbody>
@@ -37,15 +30,24 @@
                 <b-button variant="info">Employee List</b-button>
             </div>
             <div class="p-2">
-                <b-button variant="success">Book It!</b-button>
+                <EventForm />
+                <!-- <b-button variant="success">Book It!</b-button> -->
+            </div>
+            <div class="p-2">
+                <b-button variant="success" @click="testRequest">Test button!</b-button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+import EventForm from "./EventForm";
+
 export default {
     name: "Calendar",
+    components: {
+        EventForm
+    },
     data: function() {
         return {
             login: localStorage.getItem("login"),
@@ -63,6 +65,15 @@ export default {
         }
     },
     methods: {
+        testRequest: function() {
+
+            // fetch('api/auth/', 
+            // fetch('http://booker.loc/Server/app/api/auth/', 
+            fetch('http://192.168.0.15/~user6/booker/Server/app/api/users/1', 
+            {method: "GET"})
+            .then((response) => response.json())
+            .then((data) => {console.log(data)})
+        },
         currentMonth: function(){
             this.selectedMonth = this.date.getMonth();
             return this.selectedMonth

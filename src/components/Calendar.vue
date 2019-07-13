@@ -26,16 +26,22 @@
                 <input type="checkbox" class="custom-control-input" id="customSwitch1" @click="changeFormat" v-else checked>
                 <label class="custom-control-label" for="customSwitch1">Switch week format: <b>({{weekFormat}})</b></label>
             </div>
+            <div class="custom-control custom-switch pb-2">
+                <input type="checkbox" class="custom-control-input" name="time" @click="changeTimeFormat" id="timeSwicher">
+                <label class="custom-control-label" for="timeSwicher">Switch time format: {{timeFormat}}</label>
+            </div>
             <div class="p-2 pt-3">
                 <b-button variant="info">Employee List</b-button>
             </div>
             <div class="p-2">
-                <EventForm />
+                <EventForm 
+                :hours-format="timeFormat"
+                />
                 <!-- <b-button variant="success">Book It!</b-button> -->
             </div>
-            <div class="p-2">
+            <!-- <div class="p-2">
                 <b-button variant="success" @click="testRequest">Test button!</b-button>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
@@ -61,19 +67,11 @@ export default {
             firstDay: 1,
             lastWeekDay: undefined,
             days: [],
-            weekFormat: "RU"
+            weekFormat: "RU",
+            timeFormat: 24
         }
     },
     methods: {
-        testRequest: function() {
-
-            // fetch('api/auth/', 
-            // fetch('http://booker.loc/Server/app/api/auth/', 
-            fetch('http://192.168.0.15/~user6/booker/Server/app/api/users/1', 
-            {method: "GET"})
-            .then((response) => response.json())
-            .then((data) => {console.log(data)})
-        },
         currentMonth: function(){
             this.selectedMonth = this.date.getMonth();
             return this.selectedMonth
@@ -164,6 +162,14 @@ export default {
                 // this.weekFormat = "USA";
             }
             this.getMonthesDays();
+        },
+        changeTimeFormat() {
+            if(this.timeFormat == 24)
+            {
+                this.timeFormat = 12;
+            } else {
+                this.timeFormat = 24;
+            }
         }
     },
     computed: {
@@ -188,7 +194,7 @@ export default {
         week(){
             if(this.firstDay == 0){
                 return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-            }else{
+            } else {
                 return ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
             }
         }

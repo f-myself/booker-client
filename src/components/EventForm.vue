@@ -11,9 +11,9 @@
       @ok="validateForm"
     >
 
-      <div class="alert alert-danger" role="alert" v-if="error">
-        {{error}}
-      </div>
+      <b-alert show class="text-center" v-model="error" variant="danger" v-if="error">
+        <h4>{{error}}</h4>
+      </b-alert>
       <form ref="form" @submit="validateForm">
         <div class="form-group">
           <label for="userFor">Booked for:</label>
@@ -29,26 +29,26 @@
           <label for="timeStart">Beginning on:</label>
           <div class="row">
             <div class="col-4">
-              <select class="form-control" v-if="hoursFormat == 24">
+              <select class="form-control" v-if="hoursFormat == 24" v-model="formData.hoursStart">
                 <option selected disabled>Hours</option>
                 <option :key="index" v-for="(hour, index) in 24" v-if="hour >= 8 && hour <= 20">{{hour}}</option>
               </select>
-              <select class="form-control" v-else>
+              <select class="form-control" v-else v-model="formData.hoursStart">
                 <option selected disabled>Hours</option>
                 <option :key="index" v-for="(hour, index) in 12">{{hour}}</option>
               </select>
             </div>:
             <div class="col-4">
-              <select class="form-control">
+              <select class="form-control" v-model="formData.minutesStart">
                 <option selected disabled>Minutes</option>
                 <option :key="index" v-for="(minute, index) in minutes">{{minute}}</option>
               </select>
             </div>
             <div class="col-3 pl-0" v-if="hoursFormat != 24">
-              <select class="form-control">
+              <select class="form-control" v-model="formData.midnightStart">
                 <option selected disabled>AM/PM</option>
                 <option value="am">A.M.</option>
-                <option value="am">P.M.</option>
+                <option value="pm">P.M.</option>
               </select>
             </div>
           </div>
@@ -57,33 +57,33 @@
           <label for="timeStart">Ending on:</label>
           <div class="row">
             <div class="col-4">
-              <select class="form-control" v-if="hoursFormat == 24">
+              <select class="form-control" id="h-end" v-model="formData.hoursEnd" v-if="hoursFormat == 24">
                 <option selected disabled>Hours</option>
                 <option :key="index" v-for="(hour, index) in 24" v-if="hour >= 8 && hour <= 20">{{hour}}</option>
               </select>
-              <select class="form-control" v-else>
+              <select class="form-control" v-model="formData.hoursEnd" v-else>
                 <option selected disabled>Hours</option>
                 <option :key="index" v-for="(hour, index) in 12">{{hour}}</option>
               </select>
             </div>:
             <div class="col-4">
-              <select class="form-control">
+              <select class="form-control" v-model="formData.minutesEnd">
                 <option selected disabled>Minutes</option>
                 <option :key="index" v-for="(minute, index) in minutes">{{minute}}</option>
               </select>
             </div>
             <div class="col-3 pl-0" v-if="hoursFormat != 24">
-              <select class="form-control">
+              <select class="form-control" v-model="formData.midnightEnd">
                 <option selected disabled>AM/PM</option>
                 <option value="am">A.M.</option>
-                <option value="am">P.M.</option>
+                <option value="pm">P.M.</option>
               </select>
             </div>
           </div>
         </div>
         <div class="form-group">
           <label for="event-desc">Describe event</label>
-          <textarea class="form-control" id="event-desc" rows="3"></textarea>
+          <textarea class="form-control" v-model="formData.description" id="event-desc" rows="3"></textarea>
         </div>
         <div class="custom-control custom-switch pb-2">
           <input type="checkbox" class="custom-control-input" v-model="recurrence" name="recurrence" @click="switchRecurring" id="recurrenceSwitcher">
@@ -131,17 +131,20 @@
         recurrence: false,
         formData: {
           userFor: localStorage.getItem("id"),
-          dateStart: "",
-          hoursStart: "",
-          minutesStart: "",
-          hoursEnd: "",
-          minutesEnd: "",
+          dateStart: undefined,
+          hoursStart: "Hours",
+          minutesStart: "Minutes",
+          midnightStart: "AM/PM",
+          hoursEnd: "Hours",
+          minutesEnd: "Minutes",
+          midnightEnd: "AM/PM",
+          description: "",
           recurring: "weekly",
           duration: 1
         }
       }
     },
-    props: ['hoursFormat'],
+    props: ['hoursFormat', 'currentDate'],
     methods: {
       checkFormValidity() {
         const valid = this.$refs.form.checkValidity()
@@ -219,21 +222,105 @@
       resetDuration: function() {
         this.formData.duration = 1;
       },
-      validateForm: function() {
-        if (this.formData.dateStart) {
-          let date = this.formData.dateStart.split('-');
-          if (+date[0] < 2019)
-          {
-            this.error = "You might to select the current year or later";
-          }
+      validateForm: function(bvModalEvt) {
+        bvModalEvt.preventDefault();
+        console.log('inited');
 
-          if (+date[1] > 12 || +date[1] < 1)
-          {
-            this.error = "You might to select correct month";
+        if (!this.formData.dateStart) {
+          this.error = "Please, choose the correct start date!";
+          return;
+        }
+
+        if (!this.validateDate(this.formData.dateStart)) {
+          return;
+        }
+
+        let hoursStart = this.standartizeHours(this.formData.hoursStart, this.formData.midnightStart);
+        let hoursEnd = this.standartizeHours(this.formData.hoursEnd, this.formData.midnightEnd);
+
+        if(!hoursStart) {
+          this.error = "Please, choose the correct start time";
+          return;
+        }
+
+        if(!hoursEnd) {
+          this.error = "Please, choose the correct ending time";
+          return;
+        }
+
+        let correctDates = this.standartizeDate(this.formData.dateStart, hoursStart, this.formData.minutesStart, hoursEnd, this.formData.minutesEnd);
+
+        if(correctDates) {
+          if(correctDates.dateStart > correctDates.dateEnd){
+            this.error = "The event cannot end before it starts";
+            return;
           }
         } else {
-          this.error - "Please, choose correct date!"
+          return;
         }
+
+        if (this.recurrence) {
+          if(this.formData.recurring == 'weekly' && this.formData.duration > 4 || this.formData.duration < 1) {
+            this.error = "Weekly duration cannot be more than 4";
+            return;
+          }
+
+          if(this.formData.recurring == 'bi-weekly' && this.formData.duration > 2 || this.formData.duration < 1) {
+            this.error = "Bi-weekly duration cannot be more than 2";
+            return;
+          }
+
+          if(this.formData.recurring == 'monthly' && this.formData.duration != 1) {
+            this.error = "Monthly duration cannot be more than 1";
+            return;
+          }
+        }
+
+        let finalFormData = new FormData();
+        finalFormData.append('userForId', this.formData.userFor);
+        finalFormData.append('dateStart', correctDates.dateStart);
+        finalFormData.append('dateEnd', correctDates.dateEnd);
+        finalFormData.append('decription', this.formData.description);
+
+        if(this.recurrence) {
+          finalFormData.append("recurring", this.formData.recurring);
+          finalFormData.append("duration", this.formData.duration);
+        }
+
+        this.error = 'success';
+
+        /*
+        * доделать: 
+        * Проверка на то, что время, на которое запланировано событие ещё не наступило
+        * Метод отправки данных на сервер + компоненты для модуля ивентов на сервере
+        * Перерисовка формы на success message
+        */
+
+      },
+      validateDate: function(date) {
+
+        let dateArr = date.split('-');
+        if (+dateArr[0] < 2019) {
+          this.error = "You might to select the current year or later";
+          return;
+        }
+
+        if (+dateArr[1] > 12 || +dateArr[1] < 1) {
+          this.error = "You might to select correct month";
+          return;
+        }
+
+        if (+dateArr[0] > 2020) {
+          this.error = "The selected date is not soon";
+          return;
+        }
+
+        if (+dateArr[0] == 2019 && +dateArr[1] < this.currentDate.getMonth() || +dateArr[2] < this.currentDate.getDate()) {
+          this.error = "You can not create event before current date!";
+          return;
+        }
+
+        return true;
       },
       switchRecurring: function()
       {
@@ -243,11 +330,34 @@
           this.recurrence = false;
         }
       },
-      standartizeHours: function(hours) {
-        if (this.hoursFormat != 24)
-        {
-          this.hour;
+      standartizeHours: function(hours, midnight) {
+        if (isNaN(hours)) {
+          return;
         }
+        if (this.hoursFormat != 24 && midnight == 'pm') {
+            return +hours + 12;
+        }
+        return hours;
+      },
+      standartizeDate: function(date, hoursStart, minutesStart, hoursEnd, minutesEnd) {
+        let result = {};
+        let dateArr = date.split('-');
+
+        if(hoursStart && minutesStart) {
+          var dateStart = new Date(dateArr[0], dateArr[1] - 1, dateArr[2], hoursStart, minutesStart);
+        }
+        
+        if(hoursEnd && minutesEnd) {
+          var dateEnd = new Date(dateArr[0], dateArr[1] - 1, dateArr[2], hoursEnd, minutesEnd);
+        }
+
+        if(dateStart && dateEnd) {
+          result.dateStart = dateStart.getTime() / 1000;
+          result.dateEnd = dateEnd.getTime() / 1000;
+          return result;
+        }
+        this.error = "Please, choose correct date";
+        return;
       }
     },
     computed: {

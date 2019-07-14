@@ -36,6 +36,7 @@
             <div class="p-2">
                 <EventForm 
                 :hours-format="timeFormat"
+                :current-date="date"
                 />
                 <!-- <b-button variant="success">Book It!</b-button> -->
             </div>

@@ -178,9 +178,9 @@
         let role = localStorage.getItem("role");
         if (role == 1){
           let token = localStorage.getItem("token");
-          // fetch('api/admin/', 
-          fetch('http://booker.loc/Server/app/api/admin/' + id + '/' + token, 
-          // fetch('http://192.168.0.15/~user6/booker/Server/app/api/admin/',
+          // fetch('api/admin/' + id + '/' + token, 
+          // fetch('http://booker.loc/Server/app/api/admin/' + id + '/' + token, 
+          fetch('http://192.168.0.15/~user6/booker/Server/app/api/admin/' + id + '/' + token,
           {method: "GET"})
           .then((response) => response.json())
           .then((res) => {
@@ -190,14 +190,14 @@
                 break;
               default:
                 localStorage.clear();
-                this.$router.push("/");
+                location.reload();
                 break;
             }
           });
         } else {
-          // fetch('api/users/', 
-          fetch('http://booker.loc/Server/app/api/users/' + id, 
-          // fetch('http://192.168.0.15/~user6/booker/Server/app/api/users/', 
+          // fetch('api/users/' + id, 
+          // fetch('http://booker.loc/Server/app/api/users/' + id, 
+          fetch('http://192.168.0.15/~user6/booker/Server/app/api/users/' + id, 
           {method: "GET"})
           .then((response) => response.json())
           .then((res) => {
@@ -207,11 +207,11 @@
                 break;
               case "no_user":
                 localStorage.clear();
-                this.$router.push("/");
+                location.reload()
                 break;
               case "err_valid":
                 localStorage.clear();
-                this.$router.push("/");
+                location.reload()
                 break;
               default:
                 break;
@@ -288,6 +288,23 @@
           finalFormData.append("recurring", this.formData.recurring);
           finalFormData.append("duration", this.formData.duration);
         }
+
+        // fetch('api/events/', 
+        // fetch('http://booker.loc/Server/app/api/events/', 
+        fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/',
+        {method: "POST", body: finalFormData})
+        .then((response) => response.json())
+        .then((res) => {
+          console.log(res);
+          // switch (res.status) {
+          //   case "success":
+          //     this.users = res.data;
+          //     break;
+          //   default:
+          //     localStorage.clear();
+          //     location.reload();
+          //     break;
+          });
 
         this.error = 'success';
 

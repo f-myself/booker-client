@@ -70,7 +70,7 @@ export default {
             localStorage.setItem("login", data.login);
             localStorage.setItem("token", data.token);
             localStorage.setItem("role", data.role);
-            this.$router.push('/calendar');
+            this.$router.push('/calendar/1');
 
             this.$emit("logSuc");
             break;

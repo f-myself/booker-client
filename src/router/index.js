@@ -14,7 +14,7 @@ export default new Router({
       component: Auth
     },
     {
-      path: '/calendar',
+      path: '/calendar/:id',
       name: 'Calendar',
       component: Calendar
     }

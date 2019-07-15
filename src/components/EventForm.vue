@@ -281,6 +281,8 @@
         finalFormData.append('dateStart', correctDates.dateStart);
         finalFormData.append('dateEnd', correctDates.dateEnd);
         finalFormData.append('decription', this.formData.description);
+        finalFormData.append('boardroom', this.$route.params.id);
+        finalFormData.append('dateCreate', this.currentDate.getTime() / 1000 | 0);
 
         if(this.recurrence) {
           finalFormData.append("recurring", this.formData.recurring);
@@ -291,9 +293,9 @@
 
         /*
         * доделать: 
-        * Проверка на то, что время, на которое запланировано событие ещё не наступило
-        * Метод отправки данных на сервер + компоненты для модуля ивентов на сервере
-        * Перерисовка формы на success message
+        * Проверка на то, что время, на которое запланировано событие ещё не наступило +
+        * Метод отправки данных на сервер + Модуль ивентов на сервере
+        * Перерисовка формы на success message || отправка success в календарь?
         */
 
       },
@@ -351,6 +353,11 @@
           var dateEnd = new Date(dateArr[0], dateArr[1] - 1, dateArr[2], hoursEnd, minutesEnd);
         }
 
+        if (dateStart.getTime() < this.currentDate.getTime()) {
+          this.error = "You can not create event before current time!";
+          return;
+        }
+
         if(dateStart && dateEnd) {
           result.dateStart = dateStart.getTime() / 1000;
           result.dateEnd = dateEnd.getTime() / 1000;
@@ -364,6 +371,7 @@
     },
     created: function() {
       this.getUsers();
+      console.log();
     }
   }
 </script>

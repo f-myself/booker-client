@@ -9,9 +9,9 @@
             <b-navbar-nav>
                 <b-nav-item-dropdown text="Boardroom" class="white" left>
                     
-                    <b-dropdown-item href="#">Boardroom #1</b-dropdown-item>
-                    <b-dropdown-item href="#">Boardroom #2</b-dropdown-item>
-                    <b-dropdown-item href="#">Boardroom #3</b-dropdown-item>
+                    <b-dropdown-item><router-link to="/calendar/1">Boardroom #1</router-link></b-dropdown-item>
+                    <b-dropdown-item><router-link to="/calendar/2">Boardroom #2</router-link></b-dropdown-item>
+                    <b-dropdown-item><router-link to="/calendar/3">Boardroom #3</router-link></b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
 

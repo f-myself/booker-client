@@ -38,7 +38,7 @@ router.beforeEach((to, from, next) => {
   }
 
   if (to.meta.login && to.path == '/'){
-    next('/calendar')
+    next('/calendar/1')
   }
 })
 

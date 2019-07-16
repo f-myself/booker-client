@@ -83,7 +83,7 @@
         </div>
         <div class="form-group">
           <label for="event-desc">Describe event</label>
-          <textarea class="form-control" v-model="formData.description" id="event-desc" rows="3"></textarea>
+          <textarea class="form-control" v-model="formData.description" id="event-desc" rows="3" required></textarea>
         </div>
         <div class="custom-control custom-switch pb-2">
           <input type="checkbox" class="custom-control-input" v-model="recurrence" name="recurrence" @click="switchRecurring" id="recurrenceSwitcher">
@@ -179,8 +179,8 @@
         if (role == 1){
           let token = localStorage.getItem("token");
           // fetch('api/admin/' + id + '/' + token, 
-          // fetch('http://booker.loc/Server/app/api/admin/' + id + '/' + token, 
-          fetch('http://192.168.0.15/~user6/booker/Server/app/api/admin/' + id + '/' + token,
+          fetch('http://booker.loc/Server/app/api/admin/' + id + '/' + token, 
+          // fetch('http://192.168.0.15/~user6/booker/Server/app/api/admin/' + id + '/' + token,
           {method: "GET"})
           .then((response) => response.json())
           .then((res) => {
@@ -196,8 +196,8 @@
           });
         } else {
           // fetch('api/users/' + id, 
-          // fetch('http://booker.loc/Server/app/api/users/' + id, 
-          fetch('http://192.168.0.15/~user6/booker/Server/app/api/users/' + id, 
+          fetch('http://booker.loc/Server/app/api/users/' + id, 
+          // fetch('http://192.168.0.15/~user6/booker/Server/app/api/users/' + id, 
           {method: "GET"})
           .then((response) => response.json())
           .then((res) => {
@@ -238,6 +238,11 @@
         let hoursStart = this.standartizeHours(this.formData.hoursStart, this.formData.midnightStart);
         let hoursEnd = this.standartizeHours(this.formData.hoursEnd, this.formData.midnightEnd);
 
+        if (hoursStart < 8 || hoursStart > 20 || hoursEnd < 8 || hoursEnd > 20) {
+          this.error = "Events aviable only on 8 a.m. till 9 p.m.";
+          return;
+        }
+
         if(!hoursStart) {
           this.error = "Please, choose the correct start time";
           return;
@@ -256,6 +261,11 @@
             return;
           }
         } else {
+          return;
+        }
+
+        if (this.formData.description.length <= 0) {
+          this.error = "Desctiption is required field";
           return;
         }
 
@@ -280,7 +290,7 @@
         finalFormData.append('userForId', this.formData.userFor);
         finalFormData.append('dateStart', correctDates.dateStart);
         finalFormData.append('dateEnd', correctDates.dateEnd);
-        finalFormData.append('decription', this.formData.description);
+        finalFormData.append('description', this.formData.description);
         finalFormData.append('boardroom', this.$route.params.id);
         finalFormData.append('dateCreate', this.currentDate.getTime() / 1000 | 0);
 
@@ -290,8 +300,8 @@
         }
 
         // fetch('api/events/', 
-        // fetch('http://booker.loc/Server/app/api/events/', 
-        fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/',
+        fetch('http://booker.loc/Server/app/api/events/', 
+        // fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/',
         {method: "POST", body: finalFormData})
         .then((response) => response.json())
         .then((res) => {
@@ -358,6 +368,13 @@
         }
         return hours;
       },
+      checkHolidays: function(date) {
+        if(date.getDay() >= 6) {
+          this.error = "Sorry, you can't planning event on weekends";
+          return;
+        }
+        return true;
+      },
       standartizeDate: function(date, hoursStart, minutesStart, hoursEnd, minutesEnd) {
         let result = {};
         let dateArr = date.split('-');
@@ -368,6 +385,10 @@
         
         if(hoursEnd && minutesEnd) {
           var dateEnd = new Date(dateArr[0], dateArr[1] - 1, dateArr[2], hoursEnd, minutesEnd);
+        }
+
+        if (!this.checkHolidays(dateStart) || !this.checkHolidays(dateEnd)) {
+          return;
         }
 
         if (dateStart.getTime() < this.currentDate.getTime()) {

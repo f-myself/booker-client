@@ -152,8 +152,19 @@
         return valid
       },
       resetModal() {
-        this.name = ''
-        this.nameState = null
+        this.formData = {
+          userFor: localStorage.getItem("id"),
+          dateStart: undefined,
+          hoursStart: "Hours",
+          minutesStart: "Minutes",
+          midnightStart: "AM/PM",
+          hoursEnd: "Hours",
+          minutesEnd: "Minutes",
+          midnightEnd: "AM/PM",
+          description: "",
+          recurring: "weekly",
+          duration: 1
+        }
       },
       handleOk(bvModalEvt) {
         // Prevent modal from closing
@@ -305,18 +316,43 @@
         {method: "POST", body: finalFormData})
         .then((response) => response.json())
         .then((res) => {
-          console.log(res);
-          // switch (res.status) {
-          //   case "success":
-          //     this.users = res.data;
-          //     break;
-          //   default:
-          //     localStorage.clear();
-          //     location.reload();
-          //     break;
-          });
+          switch (res.status) {
+            case "success":
+              this.$emit("getStatus", {variant: "success", msg: "Thanks, your event created!"});
+              break;
+            case "err_dates":
+              this.$emit("getStatus", {variant: "danger", msg: "The event cannot end before it starts!"});
+              break;
+            case "err_hours":
+              this.$emit("getStatus", {variant: "danger", msg: "Events aviable only on 8 a.m. till 9 p.m."});
+              break;
+            case "err_future":
+              this.$emit("getStatus", {variant: "danger", msg: "The selected date is not soon"});
+              break;
+            case "err_past":
+              this.$emit("getStatus", {variant: "danger", msg: "You might to select the current year or later"});
+              break;
+            case "err_valid":
+              this.$emit("getStatus", {variant: "danger", msg: "Fields were filled incorrect!"});
+              break;
+            case "err_time":
+              this.$emit("getStatus", {variant: "danger", msg: "An event has already been booked for the specified time!"});
+              break;
+            case "err_holiday":
+              this.$emit("getStatus", {variant: "danger", msg: "You can not book an event for the weekend!"});
+              break;
+            case "succ_with_errors":
+              this.$emit("getStatus", {variant: "warning", msg: "The event was booked, but some recurrent events were failed cause they overlapped with other events."});
+              break;
+            default:
+              this.$emit("getStatus", {variant: "danger", msg: "Something going wrong. Please, try again later!"});
+              break;
+          }
+        });
+          this.$nextTick(() => {
+            this.$refs.modal.hide()
+          })
 
-        this.error = 'success';
 
         /*
         * доделать: 
@@ -344,10 +380,11 @@
           return;
         }
 
-        if (+dateArr[0] == 2019 && +dateArr[1] < this.currentDate.getMonth() || +dateArr[2] < this.currentDate.getDate()) {
-          this.error = "You can not create event before current date!";
-          return;
-        }
+        // if (+dateArr[0] == 2019 && +dateArr[1] < this.currentDate.getMonth() + 1 || +dateArr[2] < this.currentDate.getDate()) {
+        //   console.log(this.currentDate.getMonth() + 1)
+        //   this.error = "You can not create event before current date!";
+        //   return;
+        // }
 
         return true;
       },

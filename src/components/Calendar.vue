@@ -1,6 +1,9 @@
 <template>
     <div class="row">
         <div class="col-9">
+            <b-alert show class="text-center" v-model="status" :variant="status.variant" v-if="status">
+                <h4>{{status.msg}}</h4>
+            </b-alert>
             <table id="calendar2" class="table table-bordered">
                 <thead>
                     <tr>
@@ -37,6 +40,7 @@
                 <EventForm 
                 :hours-format="timeFormat"
                 :current-date="date"
+                @getStatus="setStatus"
                 />
                 <!-- <b-button variant="success">Book It!</b-button> -->
             </div>
@@ -57,6 +61,8 @@ export default {
     },
     data: function() {
         return {
+            status: "",
+            events: [],
             login: localStorage.getItem("login"),
             date: new Date(),
             monthes: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'November', 'October', 'December'],
@@ -73,6 +79,10 @@ export default {
         }
     },
     methods: {
+        setStatus(data) {
+            this.status = data;
+            console.log(data);
+        },
         currentMonth: function(){
             this.selectedMonth = this.date.getMonth();
             return this.selectedMonth
@@ -84,12 +94,14 @@ export default {
         showMonth: function(month){
             this.selectedMonth = month;
             return this.monthes[month];
+
         },
         nextMonth: function(){
             this.getFirstWeekDay();
             this.getLastDay();
             this.getLastWeekDay();
             this.getMonthesDays();
+            //this.getEvents(this.selectedMonth + 2 );
             if(this.selectedMonth < 11){
                 return this.selectedMonth++;
             }
@@ -101,6 +113,7 @@ export default {
             this.getLastDay();
             this.getLastWeekDay();
             this.getMonthesDays();
+            // this.getEvents(this.selectedMonth);
             if(this.selectedMonth > 0){
                 return this.selectedMonth--;
             }
@@ -171,8 +184,30 @@ export default {
             } else {
                 this.timeFormat = 24;
             }
+        },
+        getEvents: function(month=+this.selectedMonth + 1) {
+            // fetch('api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + this.selectedMonth, 
+            fetch('http://booker.loc/Server/app/api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + month, 
+            // fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + this.selectedMonth,
+            {method: "GET"})
+            .then((response) => response.json())
+            .then((res) => {
+                switch (res.status) {
+                    case "success":
+                        this.events = res.data;
+                        break;
+                    default:
+                        this.status = {
+                            variant: 'danger',
+                            msg: 'Cannot get events'
+                        }
+                        break;
+                }
+            });
         }
     },
+
+    
     computed: {
         setDefaultVals: function(){
             this.getFirstWeekDay();
@@ -208,6 +243,9 @@ export default {
             this.firstDay = first;
             this.weekFormat = format;
         }
+    },
+    mounted: function() {
+        this.getEvents();
     }
 }
 </script>

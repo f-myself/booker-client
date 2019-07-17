@@ -7,7 +7,7 @@
             <table id="calendar2" class="table table-bordered">
                 <thead>
                     <tr>
-                        {{ setDefaultVals }}
+                        <!-- {{ setDefaultVals }} -->
                         <td @click="prevMonth"><b-button variant="primary" class="btn-switch"> < </b-button></td>
                         <td colspan="5"><h2><font-awesome-icon :icon="['far', 'calendar-alt']" /> {{ monthYear }}</h2></td>
                         <td @click="nextMonth"><b-button variant="primary" class="btn-switch"> > </b-button></td>
@@ -82,6 +82,7 @@ export default {
         setStatus(data) {
             this.status = data;
             console.log(data);
+            this.getEvents();
         },
         currentMonth: function(){
             this.selectedMonth = this.date.getMonth();
@@ -101,7 +102,6 @@ export default {
             this.getLastDay();
             this.getLastWeekDay();
             this.getMonthesDays();
-            //this.getEvents(this.selectedMonth + 2 );
             if(this.selectedMonth < 11){
                 return this.selectedMonth++;
             }
@@ -113,7 +113,6 @@ export default {
             this.getLastDay();
             this.getLastWeekDay();
             this.getMonthesDays();
-            // this.getEvents(this.selectedMonth);
             if(this.selectedMonth > 0){
                 return this.selectedMonth--;
             }
@@ -153,7 +152,6 @@ export default {
             }
         },
         formatFirstWeek: function(){
-            //console.log(this.days[0].length)
             for(var i = this.days[0].length; i != 0 && i < 7; i++){
                 this.days[0].unshift({
                     dayNum: undefined, 
@@ -173,7 +171,6 @@ export default {
                 this.firstDay = localStorage.getItem("firstDay");
                 localStorage.setItem("weekFormat", "USA");
                 this.weekFormat = localStorage.getItem("weekFormat");
-                // this.weekFormat = "USA";
             }
             this.getMonthesDays();
         },
@@ -185,15 +182,22 @@ export default {
                 this.timeFormat = 24;
             }
         },
-        getEvents: function(month=+this.selectedMonth + 1) {
+        getEvents: function() {
             // fetch('api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + this.selectedMonth, 
-            fetch('http://booker.loc/Server/app/api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + month, 
+            fetch('http://booker.loc/Server/app/api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + (this.selectedMonth + 1), 
             // fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + this.selectedMonth,
             {method: "GET"})
             .then((response) => response.json())
             .then((res) => {
                 switch (res.status) {
                     case "success":
+                        if(Array.isArray(res.data)) {
+                            res.data.forEach(element => {
+                                element.startEvent += "000";
+                                element.endEvent += "000";
+                                element.createdEvent += "000";
+                            });
+                        }
                         this.events = res.data;
                         break;
                     default:
@@ -210,11 +214,7 @@ export default {
     
     computed: {
         setDefaultVals: function(){
-            this.getFirstWeekDay();
-            this.getLastWeekDay();
-            this.getLastDay();
-            this.getMonthesDays();
-            this.formatFirstWeek();
+            
         },
         monthYear: function(){
             this.days = [];
@@ -235,6 +235,11 @@ export default {
             }
         }
     },
+    watch: {
+        selectedMonth: function(val, oldVal) {
+            this.getEvents();
+        }
+    },
     created: function() {
         let first = localStorage.getItem("firstDay");
         let format = localStorage.getItem("weekFormat");
@@ -245,7 +250,19 @@ export default {
         }
     },
     mounted: function() {
-        this.getEvents();
+        this.getFirstWeekDay();
+        this.getLastWeekDay();
+        this.getLastDay();
+        this.getMonthesDays();
+        this.formatFirstWeek();
+    },
+    beforeUpdate: function() {
+        console.log('updating');
+        this.getFirstWeekDay();
+        this.getLastWeekDay();
+        this.getLastDay();
+        this.getMonthesDays();
+        this.formatFirstWeek();
     }
 }
 </script>

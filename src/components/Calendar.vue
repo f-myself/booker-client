@@ -18,7 +18,13 @@
                 </thead>
                 <tbody>
                     <tr :key="index" v-for="(week, index) in days">
-                        <td :key="index" v-for="(day, index) in week">{{ day.dayNum }}</td>
+                        <td :key="index" v-for="(day, index) in week">{{ day.dayNum }}
+                            <b-list-group>
+                            <b-list-group-item :key="index" v-for="(event, index) in events" v-if="new Date(+event.startEvent).getDate() == day.dayNum" to="#" size="sm" variant="primary" class="mb-1 p-0 border-0 text-center event-badge"><small>
+                               {{event.startHour}}:{{event.startMinutes}} {{event.ampmStart}} - {{event.endHour}}:{{event.endMinutes}} {{event.ampmEnd}}</small>
+                            </b-list-group-item>
+                            </b-list-group>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -181,11 +187,12 @@ export default {
             } else {
                 this.timeFormat = 24;
             }
+            this.getEvents();
         },
         getEvents: function() {
-            // fetch('api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + this.selectedMonth, 
-            fetch('http://booker.loc/Server/app/api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + (this.selectedMonth + 1), 
-            // fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + this.selectedMonth,
+            // fetch('api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + (this.selectedMonth + 1), 
+            //fetch('http://booker.loc/Server/app/api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + (this.selectedMonth + 1), 
+            fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + (this.selectedMonth + 1),
             {method: "GET"})
             .then((response) => response.json())
             .then((res) => {
@@ -196,6 +203,39 @@ export default {
                                 element.startEvent += "000";
                                 element.endEvent += "000";
                                 element.createdEvent += "000";
+
+                                if (this.timeFormat == 24) {
+                                    element.startHour = new Date(+element.startEvent).getHours();
+                                    element.startMinutes = new Date(+element.startEvent).getMinutes();
+                                    if (element.startMinutes == 0) {
+                                        element.startMinutes = "00";
+                                    }
+                                    element.endHour = new Date(+element.endEvent).getHours();
+                                    element.endMinutes = new Date(+element.endEvent).getMinutes();
+                                    if (element.endMinutes == 0) {
+                                        element.endMinutes = "00";
+                                    }
+                                } else {
+                                    element.startHour = new Date(+element.startEvent).getHours();
+                                    element.startMinutes = new Date(+element.startEvent).getMinutes();
+                                    element.ampmStart = element.startHour >= 12 ? 'pm' : 'am';
+                                    element.startHour = element.startHour % 12;
+                                    element.startHour = element.startHour ? element.startHour : 12;
+                                    element.startMinutes = new Date(+element.startEvent).getMinutes();
+                                    if (element.startMinutes == 0) {
+                                        element.startMinutes = "00";
+                                    }
+
+                                    element.endHour = new Date(+element.endEvent).getHours();
+                                    element.endMinutes = new Date(+element.endEvent).getMinutes();
+                                    element.ampmEnd = element.endHour >= 12 ? 'pm' : 'am';
+                                    element.endHour = element.endHour % 12;
+                                    element.endHour = element.endHour ? element.endHour : 12;
+                                    element.endMinutes = new Date(+element.endEvent).getMinutes();
+                                    if (element.endMinutes == 0) {
+                                        element.endMinutes = "00";
+                                    }
+                                }
                             });
                         }
                         this.events = res.data;
@@ -282,6 +322,7 @@ export default {
 #calendar2 tbody td {
     height: 118px;
     width: 118px;
+    /* max-width: 118px; */
     font-size: 18px;
     text-align: left;
 }
@@ -291,6 +332,17 @@ export default {
     font-weight: 700;
     text-align: center!important;
 
+}
+
+.event-badge {
+    background-color: #007bff;
+    color: white;
+    border-radius: .25rem;
+}
+
+.event-badge:hover {
+    background-color: rgba(0, 140, 255, 1)!important;
+    color: white!important;
 }
 
 #calendar2 thead tr:last-child {

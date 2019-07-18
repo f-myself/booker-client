@@ -167,8 +167,8 @@
         if (role == 1){
           let token = localStorage.getItem("token");
           // fetch('api/admin/' + id + '/' + token, 
-          // fetch('http://booker.loc/Server/app/api/admin/' + id + '/' + token, 
-          fetch('http://192.168.0.15/~user6/booker/Server/app/api/admin/' + id + '/' + token,
+          fetch('http://booker.loc/Server/app/api/admin/' + id + '/' + token, 
+          // fetch('http://192.168.0.15/~user6/booker/Server/app/api/admin/' + id + '/' + token,
           {method: "GET"})
           .then((response) => response.json())
           .then((res) => {
@@ -184,8 +184,8 @@
           });
         } else {
           // fetch('api/users/' + id, 
-          // fetch('http://booker.loc/Server/app/api/users/' + id, 
-          fetch('http://192.168.0.15/~user6/booker/Server/app/api/users/' + id, 
+          fetch('http://booker.loc/Server/app/api/users/' + id, 
+          // fetch('http://192.168.0.15/~user6/booker/Server/app/api/users/' + id, 
           {method: "GET"})
           .then((response) => response.json())
           .then((res) => {
@@ -288,8 +288,8 @@
         }
 
         // fetch('api/events/', 
-        // fetch('http://booker.loc/Server/app/api/events/', 
-        fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/',
+        fetch('http://booker.loc/Server/app/api/events/', 
+        // fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/',
         {method: "POST", body: finalFormData})
         .then((response) => response.json())
         .then((res) => {
@@ -334,8 +334,8 @@
         /*
         * доделать: 
         * Проверка на то, что время, на которое запланировано событие ещё не наступило +
-        * Метод отправки данных на сервер + Модуль ивентов на сервере
-        * Перерисовка формы на success message || отправка success в календарь?
+        * Метод отправки данных на сервер + Модуль ивентов на сервере +
+        * Перерисовка формы на success message || отправка success в календарь? +
         */
 
       },
@@ -356,12 +356,6 @@
           this.error = "The selected date is not soon";
           return;
         }
-
-        // if (+dateArr[0] == 2019 && +dateArr[1] < this.currentDate.getMonth() + 1 || +dateArr[2] < this.currentDate.getDate()) {
-        //   console.log(this.currentDate.getMonth() + 1)
-        //   this.error = "You can not create event before current date!";
-        //   return;
-        // }
 
         return true;
       },

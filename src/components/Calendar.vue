@@ -7,7 +7,6 @@
             <table id="calendar2" class="table table-bordered">
                 <thead>
                     <tr>
-                        <!-- {{ setDefaultVals }} -->
                         <td @click="prevMonth"><b-button variant="primary" class="btn-switch"> < </b-button></td>
                         <td colspan="5"><h2><font-awesome-icon :icon="['far', 'calendar-alt']" /> {{ monthYear }}</h2></td>
                         <td @click="nextMonth"><b-button variant="primary" class="btn-switch"> > </b-button></td>
@@ -20,7 +19,7 @@
                     <tr :key="index" v-for="(week, index) in days">
                         <td :key="index" v-for="(day, index) in week">{{ day.dayNum }}
                             <b-list-group>
-                            <b-list-group-item :key="index" v-for="(event, index) in events" v-if="new Date(+event.startEvent).getDate() == day.dayNum" to="#" size="sm" variant="primary" class="mb-1 p-0 border-0 text-center event-badge"><small>
+                            <b-list-group-item :key="index" v-for="(event, index) in events" v-if="new Date(+event.startEvent).getDate() == day.dayNum" size="sm" variant="primary" class="mb-1 p-0 border-0 text-center event-badge" v-b-modal.my-modal @click="getEventById(index)"><small>
                                {{event.startHour}}:{{event.startMinutes}} {{event.ampmStart}} - {{event.endHour}}:{{event.endMinutes}} {{event.ampmEnd}}</small>
                             </b-list-group-item>
                             </b-list-group>
@@ -28,6 +27,35 @@
                     </tr>
                 </tbody>
             </table>
+            <b-modal 
+                id="my-modal" 
+                title="Event details"
+                hide-footer
+                v-if="selectedEvent != undefined"
+            >
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th scope="row">When</th>
+                            <td><small>Starts at</small> {{events[selectedEvent].startHour}}:{{events[selectedEvent].startMinutes}} {{events[selectedEvent].ampmStart}}</td>
+                            <td><small>Ends at</small> {{events[selectedEvent].endHour}}:{{events[selectedEvent].endMinutes}} {{events[selectedEvent].ampmEnd}}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Notes</th>
+                            <td colspan="2">{{events[selectedEvent].description}}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Who</th>
+                            <td colspan="2">{{events[selectedEvent].name}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="modal-footer">
+                    <router-link :to="'/edit/' + events[selectedEvent].id" class="btn btn-primary">Update</router-link>
+                    <button type="button" class="btn btn-outline-primary">Delete</button>
+                </div>
+                <!-- {{events[selectedEvent]}} -->
+            </b-modal>
         </div>
         <div class="col-3 text-left">
             <div class="custom-control custom-switch">
@@ -68,6 +96,7 @@ export default {
     data: function() {
         return {
             status: "",
+            selectedEvent: undefined,
             events: [],
             login: localStorage.getItem("login"),
             date: new Date(),
@@ -89,6 +118,9 @@ export default {
             this.status = data;
             console.log(data);
             this.getEvents();
+        },
+        getEventById: function(id) {
+            this.selectedEvent = id;
         },
         currentMonth: function(){
             this.selectedMonth = this.date.getMonth();
@@ -191,8 +223,8 @@ export default {
         },
         getEvents: function() {
             // fetch('api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + (this.selectedMonth + 1), 
-            //fetch('http://booker.loc/Server/app/api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + (this.selectedMonth + 1), 
-            fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + (this.selectedMonth + 1),
+            fetch('http://booker.loc/Server/app/api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + (this.selectedMonth + 1), 
+            // fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + (this.selectedMonth + 1),
             {method: "GET"})
             .then((response) => response.json())
             .then((res) => {
@@ -278,6 +310,7 @@ export default {
     watch: {
         selectedMonth: function(val, oldVal) {
             this.getEvents();
+            this.selectedEvent = undefined;
         }
     },
     created: function() {
@@ -297,7 +330,7 @@ export default {
         this.formatFirstWeek();
     },
     beforeUpdate: function() {
-        console.log('updating');
+        // console.log('updating');
         this.getFirstWeekDay();
         this.getLastWeekDay();
         this.getLastDay();
@@ -338,6 +371,7 @@ export default {
     background-color: #007bff;
     color: white;
     border-radius: .25rem;
+    cursor: pointer;
 }
 
 .event-badge:hover {

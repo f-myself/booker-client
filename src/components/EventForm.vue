@@ -417,7 +417,6 @@
     },
     created: function() {
       this.getUsers();
-      console.log();
     }
   }
 </script>

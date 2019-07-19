@@ -216,7 +216,9 @@ export default {
             if(this.timeFormat == 24)
             {
                 this.timeFormat = 12;
+                localStorage.setItem("timeFormat", 12);
             } else {
+                localStorage.setItem("timeFormat", 24);
                 this.timeFormat = 24;
             }
             this.getEvents();
@@ -328,6 +330,7 @@ export default {
         this.getLastDay();
         this.getMonthesDays();
         this.formatFirstWeek();
+        localStorage.setItem("timeFormat", 24)
     },
     beforeUpdate: function() {
         // console.log('updating');

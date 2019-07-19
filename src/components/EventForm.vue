@@ -167,8 +167,8 @@
         if (role == 1){
           let token = localStorage.getItem("token");
           // fetch('api/admin/' + id + '/' + token, 
-          fetch('http://booker.loc/Server/app/api/admin/' + id + '/' + token, 
-          // fetch('http://192.168.0.15/~user6/booker/Server/app/api/admin/' + id + '/' + token,
+          // fetch('http://booker.loc/Server/app/api/admin/' + id + '/' + token, 
+          fetch('http://192.168.0.15/~user6/booker/Server/app/api/admin/' + id + '/' + token,
           {method: "GET"})
           .then((response) => response.json())
           .then((res) => {
@@ -184,8 +184,8 @@
           });
         } else {
           // fetch('api/users/' + id, 
-          fetch('http://booker.loc/Server/app/api/users/' + id, 
-          // fetch('http://192.168.0.15/~user6/booker/Server/app/api/users/' + id, 
+          // fetch('http://booker.loc/Server/app/api/users/' + id, 
+          fetch('http://192.168.0.15/~user6/booker/Server/app/api/users/' + id, 
           {method: "GET"})
           .then((response) => response.json())
           .then((res) => {
@@ -231,12 +231,12 @@
           return;
         }
 
-        if(!hoursStart) {
+        if(!hoursStart || isNaN(this.formData.minutesStart)) {
           this.error = "Please, choose the correct start time";
           return;
         }
 
-        if(!hoursEnd) {
+        if(!hoursEnd || isNaN(this.formData.minutesEnd)) {
           this.error = "Please, choose the correct ending time";
           return;
         }
@@ -288,8 +288,8 @@
         }
 
         // fetch('api/events/', 
-        fetch('http://booker.loc/Server/app/api/events/', 
-        // fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/',
+        // fetch('http://booker.loc/Server/app/api/events/', 
+        fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/',
         {method: "POST", body: finalFormData})
         .then((response) => response.json())
         .then((res) => {

@@ -225,8 +225,8 @@ export default {
         },
         getEvents: function() {
             // fetch('api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + (this.selectedMonth + 1), 
-            fetch('http://booker.loc/Server/app/api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + (this.selectedMonth + 1), 
-            // fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + (this.selectedMonth + 1),
+            // fetch('http://booker.loc/Server/app/api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + (this.selectedMonth + 1), 
+            fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + (this.selectedMonth + 1),
             {method: "GET"})
             .then((response) => response.json())
             .then((res) => {

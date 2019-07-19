@@ -1,10 +1,11 @@
 <template>
     <div class="row">
-
+        <div class="col-12">
+            <b-alert show class="text-center" v-model="status" variant="danger" v-if="status">
+                <h4>{{status}}</h4>
+            </b-alert>
+        </div>
         <!-- <h1> hello, {{id}}</h1> -->
-        <b-alert show class="text-center" v-model="error" variant="danger" v-if="status">
-            <h4>{{status}}</h4>
-        </b-alert>
         <div class="col-4"></div>
         <div class="col-4">
         <form ref="form" class="text-left" @submit="validateForm">
@@ -128,16 +129,23 @@ export default {
             let year = date.getFullYear();
             let month = date.getMonth() + 1;
             let day = date.getDate();
-            console.log(date)
             return year + '-' + month + '-' + day;
         },
         getTime: function(startEvent, endEvent) {
             let start = startEvent + "000";
             let dateStart = new Date(+start);
-            let timeStart = dateStart.getHours() + ':' + dateStart.getMinutes();
+            if(dateStart.getMinutes() == 0) {
+                var timeStart = dateStart.getHours() + ':00';
+            } else {
+                var timeStart = dateStart.getHours() + ':' + dateStart.getMinutes();
+            }
             let end = endEvent + "000";
             let dateEnd = new Date(+end);
-            let timeEnd = dateEnd.getHours() + ':' + dateEnd.getMinutes();
+            if(dateEnd.getMinutes() == 0) {
+                var timeEnd = dateEnd.getHours() + ':00';
+            } else {
+                var timeEnd = dateEnd.getHours() + ':' + dateEnd.getMinutes();
+            }
 
             return timeStart + " - " + timeEnd;
         },
@@ -154,6 +162,7 @@ export default {
         standartizeDate: function(date, hoursStart, minutesStart, hoursEnd, minutesEnd) {
             let result = {};
             let dateArr = date.split('-');
+            let currentDate = new Date;
 
             if(hoursStart && minutesStart) {
             var dateStart = new Date(dateArr[0], dateArr[1] - 1, dateArr[2], hoursStart, minutesStart);
@@ -163,7 +172,7 @@ export default {
             var dateEnd = new Date(dateArr[0], dateArr[1] - 1, dateArr[2], hoursEnd, minutesEnd);
             }
 
-            if (dateStart.getTime() < this.currentDate.getTime()) {
+            if (dateStart.getTime() < currentDate.getTime()) {
                 this.status = "Sorry, but event is already finished!";
                 return;
             }
@@ -179,8 +188,8 @@ export default {
         checkAdmin: function() {
             var result = 
             // fetch('api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
-            fetch('http://booker.loc/Server/app/api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
-            // fetch('http://192.168.0.15/~user6/booker/Server/app/api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
+            // fetch('http://booker.loc/Server/app/api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
+            fetch('http://192.168.0.15/~user6/booker/Server/app/api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
             {method: "GET"})
             .then((response) => response.json())
             .then((res) => {
@@ -204,8 +213,8 @@ export default {
             if (role == 1){
             let token = localStorage.getItem("token");
             // fetch('api/admin/' + id + '/' + token, 
-            fetch('http://booker.loc/Server/app/api/admin/' + id + '/' + token, 
-            // fetch('http://192.168.0.15/~user6/booker/Server/app/api/admin/' + id + '/' + token,
+            // fetch('http://booker.loc/Server/app/api/admin/' + id + '/' + token, 
+            fetch('http://192.168.0.15/~user6/booker/Server/app/api/admin/' + id + '/' + token,
             {method: "GET"})
             .then((response) => response.json())
             .then((res) => {
@@ -221,8 +230,8 @@ export default {
             });
             } else {
             // fetch('api/users/' + id, 
-            fetch('http://booker.loc/Server/app/api/users/' + id, 
-            // fetch('http://192.168.0.15/~user6/booker/Server/app/api/users/' + id, 
+            // fetch('http://booker.loc/Server/app/api/users/' + id, 
+            fetch('http://192.168.0.15/~user6/booker/Server/app/api/users/' + id, 
             {method: "GET"})
             .then((response) => response.json())
             .then((res) => {
@@ -246,8 +255,8 @@ export default {
         },
         getEvent: function() {
             // fetch('api/events/' + this.$route.params.id, 
-            fetch('http://booker.loc/Server/app/api/events/' + this.$route.params.id, 
-            // fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/' + this.$route.params.id, 
+            // fetch('http://booker.loc/Server/app/api/events/' + this.$route.params.id, 
+            fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/' + this.$route.params.id, 
             {method: "GET"})
             .then((response) => response.json())
             .then((res) => {
@@ -276,14 +285,74 @@ export default {
                 this.status = "error"
             })
         },
+        dataToParamString: function (data) {
+            var string= '';
+            for(let val in data){
+                string += val + '=' + encodeURIComponent(data[val]) + '&' 
+            }
+            return string;
+        },
         validateForm: function(event) {
             event.preventDefault();
 
             let hoursStart = this.standartizeHours(this.formData.hoursStart, this.formData.midnightStart);
             let hoursEnd = this.standartizeHours(this.formData.hoursEnd, this.formData.midnightEnd);
 
+            if (hoursStart < 8 || hoursStart > 20 || hoursEnd < 8 || hoursEnd > 20) {
+                this.status = "Events aviable only on 8 a.m. till 9 p.m.";
+                return;
+            }
+
+            if(!hoursStart || isNaN(this.formData.minutesStart)) {
+                this.status = "Please, choose the correct start time";
+                return;
+            }
+
+            if(!hoursEnd || isNaN(this.formData.minutesStart)) {
+                this.status = "Please, choose the correct ending time";
+                return;
+            }
+
+
             let correctDates = this.standartizeDate(this.formData.dateStart, hoursStart, this.formData.minutesStart, hoursEnd, this.formData.minutesEnd);
-            
+
+            if(correctDates) {
+                if(correctDates.dateStart > correctDates.dateEnd) {
+                    this.status = "The event cannot end before it starts";
+                    return;
+                }
+            } else {
+            return;
+            }
+
+            if (this.formData.description.length <= 0) {
+                this.error = "Desctiption is required field";
+                return;
+            }
+
+            var dataForm = {
+                eventId: this.eventData[0].id,
+                dateStart: correctDates.dateStart,
+                dateEnd: correctDates.dateEnd,
+                description: this.eventData[0].description,
+                recFlag: this.recurrence,
+                userId: localStorage.getItem("id"),
+                token: localStorage.getItem("token")
+            }
+
+            var sendingData = this.dataToParamString(dataForm);
+
+            // fetch('api/events/', 
+            // fetch('http://booker.loc/Server/app/api/events/',
+            fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/', 
+            {method: "PUT",  body: sendingData})
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+            });
+
+            console.log('sending');
+            console.log(sendingData);
         },
     },
     created: function() {

@@ -51,10 +51,24 @@
                     </tbody>
                 </table>
                 <div class="modal-footer">
+                    <button v-b-modal.delete-modal @click="$bvModal.hide('my-modal')" type="button" class="btn btn-outline-danger">Delete</button>
                     <router-link :to="'/edit/' + events[selectedEvent].id" class="btn btn-primary">Update</router-link>
-                    <button type="button" class="btn btn-outline-primary">Delete</button>
                 </div>
                 <!-- {{events[selectedEvent]}} -->
+            </b-modal>
+
+            <b-modal 
+                id="delete-modal" 
+                title="Delete event"
+                hide-footer
+                v-if="selectedEvent != undefined"
+            >
+                <p>Are you sure you want to delete this event?</p>
+
+                <div class="modal-footer">
+                    <button type="button" @click="deleteEvent(true)" class="btn btn-outline-danger float-right">Delete all accurrencies</button>
+                    <button type="button" @click="deleteEvent(false)" class="btn btn-primary float-right">Delete</button>
+                </div>
             </b-modal>
         </div>
         <div class="col-3 text-left">
@@ -76,11 +90,8 @@
                 :current-date="date"
                 @getStatus="setStatus"
                 />
-                <!-- <b-button variant="success">Book It!</b-button> -->
+
             </div>
-            <!-- <div class="p-2">
-                <b-button variant="success" @click="testRequest">Test button!</b-button>
-            </div> -->
         </div>
     </div>
 </template>
@@ -116,7 +127,6 @@ export default {
     methods: {
         setStatus(data) {
             this.status = data;
-            console.log(data);
             this.getEvents();
         },
         getEventById: function(id) {
@@ -282,6 +292,115 @@ export default {
                         break;
                 }
             });
+        },
+        checkAdmin: function() {
+            var result = 
+            // fetch('api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
+            fetch('http://booker.loc/Server/app/api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
+            // fetch('http://192.168.0.15/~user6/booker/Server/app/api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
+            {method: "GET"})
+            .then((response) => response.json())
+            .then((res) => {
+                switch (res.status) {
+                    
+                    case 'success':
+                        return true;
+                        break;
+                        
+                    default: 
+                        localStorage.clear();
+                        location.reload();
+                        break;
+                }
+            })
+        },
+        deleteEvent: function(all) {
+            if(localStorage.getItem("role") == 1)
+            {
+                this.checkAdmin();
+            } else {
+
+                if(this.events[this.selectedEvent].user_id != localStorage.getItem("id")) {
+                    this.status = {
+                        variant: "danger",
+                        msg: "You cannot delete this event cause it doesn't belong to you"
+                    }
+                    this.$bvModal.hide('delete-modal');
+                    return;
+                }
+            }
+
+            if (all) {
+
+                if(this.events[this.selectedEvent].parent != null)
+                {
+                    var eventId = this.events[this.selectedEvent].parent;
+                } else {
+                    var eventId = this.events[this.selectedEvent].id;
+                }
+
+                // fetch('api/events/', 
+                fetch('http://booker.loc/Server/app/api/events/' + eventId + '/all/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"),
+                // fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/',
+                {method: "DELETE"})
+                .then((response) => response.json())
+                .then((res) => {
+                    switch (res.status) {
+                        case 'success':
+                            this.setStatus({variant: 'success', msg: "Booking has been deleted"});
+                            break;
+
+                        case 'err_valid':
+                            this.setStatus({variant: 'warning', msg: "Something going wrong. Try again"});
+                            break;
+                            
+                        case 'err_login':
+                            localStorage.clear();
+                            location.reload();
+                            break;
+                            
+                        case 'err_operation':
+                            this.setStatus({variant: 'warning', msg: "Something going wrong. Try again"});
+                            break;
+
+                        default: 
+                            this.setStatus({variant: 'danger', msg: "Something going wrong. Try again"})
+                            break;
+                    }
+                });
+            } else {
+                // fetch('api/events/', 
+                fetch('http://booker.loc/Server/app/api/events/' + this.events[this.selectedEvent].id + '/single/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"),
+                // fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/',
+                {method: "DELETE"})
+                .then((response) => response.json())
+                .then((res) => {
+                    switch (res.status) {
+                        case 'success':
+                            this.setStatus({variant: 'success', msg: "Booking has been deleted"});
+                            break;
+
+                        case 'err_valid':
+                            this.setStatus({variant: 'warning', msg: "Something going wrong. Try again"});
+                            break;
+                            
+                        case 'err_login':
+                            localStorage.clear();
+                            location.reload();
+                            break;
+                            
+                        case 'err_operation':
+                            this.setStatus({variant: 'warning', msg: "Something going wrong. Try again"});
+                            break;
+
+                        default: 
+                            this.setStatus({variant: 'danger', msg: "Something going wrong. Try again"})
+                            break;
+                    }
+                });
+            }
+            this.getEvents();
+            this.$bvModal.hide('delete-modal');
         }
     },
 

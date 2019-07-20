@@ -206,7 +206,6 @@ export default {
                         break;
                 }
             })
-            return result.promiseValue;
         },
         getUsers: function() {
             let id = localStorage.getItem("id");

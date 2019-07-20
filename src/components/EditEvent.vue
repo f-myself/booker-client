@@ -1,14 +1,14 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <b-alert show class="text-center" v-model="status" variant="danger" v-if="status">
+            <b-alert show class="text-center" v-model="status" :variant="statusVar" v-if="status">
                 <h4>{{status}}</h4>
             </b-alert>
         </div>
         <!-- <h1> hello, {{id}}</h1> -->
         <div class="col-4"></div>
         <div class="col-4">
-        <form ref="form" class="text-left" @submit="validateForm">
+        <form ref="form" class="text-left" @submit="validateForm" v-if="showEvent">
             <div class="form-group">
             <label for="userFor">Booked for:</label>
             <select class="form-control" id="userFor" v-model="formData.userFor">
@@ -92,6 +92,7 @@ export default {
     name: "EditEvent",
     data: function() {
         return {
+            statusVar: "danger",
             status: "",
             eventData: [],
             showEvent: false,
@@ -188,8 +189,8 @@ export default {
         checkAdmin: function() {
             var result = 
             // fetch('api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
-            // fetch('http://booker.loc/Server/app/api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
-            fetch('http://192.168.0.15/~user6/booker/Server/app/api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
+            fetch('http://booker.loc/Server/app/api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
+            // fetch('http://192.168.0.15/~user6/booker/Server/app/api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
             {method: "GET"})
             .then((response) => response.json())
             .then((res) => {
@@ -213,8 +214,8 @@ export default {
             if (role == 1){
             let token = localStorage.getItem("token");
             // fetch('api/admin/' + id + '/' + token, 
-            // fetch('http://booker.loc/Server/app/api/admin/' + id + '/' + token, 
-            fetch('http://192.168.0.15/~user6/booker/Server/app/api/admin/' + id + '/' + token,
+            fetch('http://booker.loc/Server/app/api/admin/' + id + '/' + token, 
+            // fetch('http://192.168.0.15/~user6/booker/Server/app/api/admin/' + id + '/' + token,
             {method: "GET"})
             .then((response) => response.json())
             .then((res) => {
@@ -230,8 +231,8 @@ export default {
             });
             } else {
             // fetch('api/users/' + id, 
-            // fetch('http://booker.loc/Server/app/api/users/' + id, 
-            fetch('http://192.168.0.15/~user6/booker/Server/app/api/users/' + id, 
+            fetch('http://booker.loc/Server/app/api/users/' + id, 
+            // fetch('http://192.168.0.15/~user6/booker/Server/app/api/users/' + id, 
             {method: "GET"})
             .then((response) => response.json())
             .then((res) => {
@@ -255,15 +256,15 @@ export default {
         },
         getEvent: function() {
             // fetch('api/events/' + this.$route.params.id, 
-            // fetch('http://booker.loc/Server/app/api/events/' + this.$route.params.id, 
-            fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/' + this.$route.params.id, 
+            fetch('http://booker.loc/Server/app/api/events/' + this.$route.params.id, 
+            // fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/' + this.$route.params.id, 
             {method: "GET"})
             .then((response) => response.json())
             .then((res) => {
                 switch (res.status) {
 
                     case 'success':
-                        if(res.data.user_id == localStorage.getItem("id") || localStorage.getItem("role") == 1) {
+                        if(res.data[0].user_id == localStorage.getItem("id") || localStorage.getItem("role") == 1) {
                             this.eventData = res.data;
                             if(res.data.length > 1 || res.data[0].parent) {
                                 this.showRecurrence = true;
@@ -332,9 +333,12 @@ export default {
 
             var dataForm = {
                 eventId: this.eventData[0].id,
+                roomId: this.eventData[0].boardroom_id,
+                parent: this.eventData[0].parent,
+                userFor: this.formData.userFor,
                 dateStart: correctDates.dateStart,
                 dateEnd: correctDates.dateEnd,
-                description: this.eventData[0].description,
+                description: this.formData.description,
                 recFlag: this.recurrence,
                 userId: localStorage.getItem("id"),
                 token: localStorage.getItem("token")
@@ -343,12 +347,58 @@ export default {
             var sendingData = this.dataToParamString(dataForm);
 
             // fetch('api/events/', 
-            // fetch('http://booker.loc/Server/app/api/events/',
-            fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/', 
+            fetch('http://booker.loc/Server/app/api/events/',
+            // fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/', 
             {method: "PUT",  body: sendingData})
             .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
+            .then((res) => {
+                switch (res.status) {
+                    case 'success':
+                        this.statusVar = 'success';
+                        this.status = 'Thanks, events were updated!';
+                        break;
+                    
+                    case 'err_valid':
+                        this.status = 'Fill in the fields correctly!'
+                        break;
+
+                    case 'err_dates':
+                        this.status = 'The event cannot end before it starts!'
+                        break;
+
+                    case 'err_hours':
+                        this.status = 'The selected date is not soon';
+                        break;
+
+                    case 'err_future':
+                        this.status = 'Events aviable only on 8 a.m. till 9 p.m.';
+                        break;
+
+                    case 'err_past':
+                        this.status = 'You might to select the current year or later';
+                        break;
+
+                    case 'err_time':
+                        this.status = 'An event has already been booked for the specified time!';
+                        break;
+
+                    case 'err_current':
+                        this.status = 'Sorry, but event is already finished!';
+                        break;
+                    
+                    case 'succ_with_errors':
+                        this.statusVar = 'warning';
+                        this.status = 'events were updated but problems occurred!';
+                        break;
+
+                    case 'err_login':
+                        localStorage.clear();
+                        location.reload()
+                        break;
+
+                    default: 
+                        break
+                }
             });
 
             console.log('sending');

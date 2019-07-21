@@ -4,6 +4,7 @@ import Hello from '@/components/Hello'
 import Auth from '@/components/Auth'
 import Calendar from '@/components/Calendar'
 import EditEvent from '@/components/EditEvent'
+import EmployeeList from '@/components/EmployeeList'
 
 Vue.use(Router)
 
@@ -23,6 +24,11 @@ export default new Router({
       path: '/edit/:id',
       name: 'EditEvent',
       component: EditEvent
-    }
+    },
+    {
+      path: '/employees',
+      name: 'EmployeeList',
+      component: EmployeeList
+    },
   ]
 })

@@ -7,11 +7,8 @@
 
             <b-collapse id="nav-collapse" is-nav>
             <b-navbar-nav>
-                <b-nav-item-dropdown text="Boardroom" class="white" left>
-                    
-                    <b-dropdown-item><router-link to="/calendar/1">Boardroom #1</router-link></b-dropdown-item>
-                    <b-dropdown-item><router-link to="/calendar/2">Boardroom #2</router-link></b-dropdown-item>
-                    <b-dropdown-item><router-link to="/calendar/3">Boardroom #3</router-link></b-dropdown-item>
+                <b-nav-item-dropdown text="Calendar" class="white" left>
+                    <b-dropdown-item :key="room.id" v-for="room in rooms" @click="changeRoom(room.id)" :to="'/calendar/' + room.id">{{room.name}}</b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
 
@@ -20,7 +17,6 @@
                 <b-nav-item-dropdown right>
                 <!-- Using 'button-content' slot -->
                 <template slot="button-content" class="white">Hello, <font-awesome-icon icon="user" /> {{username}}</template>
-                <b-dropdown-item href="#">Profile</b-dropdown-item>
                 <b-dropdown-item @click="logout" href="#">Sign Out</b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
@@ -31,14 +27,15 @@
 
 <script>
 export default {
-    name: "adminBar",
+    name: "navBar",
     data: () => {
         return {
             username: localStorage.getItem("login"),
             logoutData: {
                 id: localStorage.getItem("id"),
                 operation: ""
-            }
+            },
+            rooms: {}
         }
     },
     methods: {
@@ -64,9 +61,31 @@ export default {
             {method: "PUT",  body: str})
             
             location.reload();
+        },
+        getRooms: function() {
+             // fetch('api/rooms/', 
+            fetch('http://booker.loc/Server/app/api/rooms/', 
+            // fetch('http://192.168.0.15/~user6/booker/Server/app/api/rooms/',
+            {method: "GET"})
+            .then((response) => response.json())
+            .then((res) => {
+                switch (res.status) {
+                    case 'success':
+                        this.rooms = res.data;
+                        break;
+
+                    default:
+                        break;
+                }
+            });
+        },
+        changeRoom: function(room) {
+            this.$emit("changeRoom", room);
         }
-    }
-    
+    },
+    created: function() {
+        this.getRooms();
+    }    
 }
 </script>
 <style>

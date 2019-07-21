@@ -89,7 +89,6 @@ export default {
             this.infoBar.variant = "danger";
             this.infoBar.msg = "Error. No user with this login/password.";
         }
-        console.log(data);
       })
       .catch((error) => {
         this.infoBar.variant = "danger";

@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <div class="container">
-      <navBar v-if="login" />
-      <router-view @logSuc="loginChange()"></router-view>
+      <navBar @changeRoom="roomHandler" v-if="login" />
+      <router-view :room="selectedRoom" @logSuc="loginChange()"></router-view>
     </div>
   </div>
 </template>
@@ -17,13 +17,16 @@ export default {
   },
   data: () => {
     return {
-      login: false
+      login: false,
+      selectedRoom: "1"
     }
   },
   methods: {
     loginChange: function(){
-      console.log("inited");
         this.login = true;
+    },
+    roomHandler: function(room) {
+      this.selectedRoom = room;
     }
   },
   created: function() {

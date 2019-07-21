@@ -82,7 +82,7 @@
                 <label class="custom-control-label" for="timeSwicher">Switch time format: {{timeFormat}}</label>
             </div>
             <div class="p-2 pt-3">
-                <b-button variant="info">Employee List</b-button>
+                <router-link to="/employees" class="btn btn-secondary">Employee List</router-link>
             </div>
             <div class="p-2">
                 <EventForm 
@@ -124,6 +124,7 @@ export default {
             timeFormat: 24
         }
     },
+    props: ['room'],
     methods: {
         setStatus(data) {
             this.status = data;
@@ -339,9 +340,9 @@ export default {
                     var eventId = this.events[this.selectedEvent].id;
                 }
 
-                // fetch('api/events/', 
+                // fetch('api/events/' + eventId + '/all/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
                 fetch('http://booker.loc/Server/app/api/events/' + eventId + '/all/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"),
-                // fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/',
+                // fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/' + eventId + '/all/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"),
                 {method: "DELETE"})
                 .then((response) => response.json())
                 .then((res) => {
@@ -432,6 +433,9 @@ export default {
         selectedMonth: function(val, oldVal) {
             this.getEvents();
             this.selectedEvent = undefined;
+        },
+        room: function(val, oldVal) {
+            this.getEvents();
         }
     },
     created: function() {

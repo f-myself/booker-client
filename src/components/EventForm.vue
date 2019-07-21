@@ -212,7 +212,6 @@
       },
       validateForm: function(bvModalEvt) {
         bvModalEvt.preventDefault();
-        console.log('inited');
 
         if (!this.formData.dateStart) {
           this.error = "Please, choose the correct start date!";

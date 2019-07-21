@@ -370,9 +370,9 @@ export default {
                     }
                 });
             } else {
-                // fetch('api/events/', 
+                // fetch('api/events/' + this.events[this.selectedEvent].id + '/single/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
                 fetch('http://booker.loc/Server/app/api/events/' + this.events[this.selectedEvent].id + '/single/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"),
-                // fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/',
+                // fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/' + this.events[this.selectedEvent].id + '/single/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"),
                 {method: "DELETE"})
                 .then((response) => response.json())
                 .then((res) => {
@@ -456,7 +456,6 @@ export default {
         localStorage.setItem("timeFormat", 24)
     },
     beforeUpdate: function() {
-        // console.log('updating');
         this.getFirstWeekDay();
         this.getLastWeekDay();
         this.getLastDay();

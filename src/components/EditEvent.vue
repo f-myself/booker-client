@@ -399,9 +399,6 @@ export default {
                         break
                 }
             });
-
-            console.log('sending');
-            console.log(sendingData);
         },
     },
     created: function() {

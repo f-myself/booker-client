@@ -1,7 +1,7 @@
 <template>
     <div style="margin-bottom: 20px;">
         <b-navbar toggleable="lg" type="dark" variant="primary" class="my-navbar">
-            <b-navbar-brand><router-link to="/calendar/1" style="color: white; text-decoration: none;">Boardroom Booker</router-link></b-navbar-brand>
+            <b-navbar-brand to="/calendar/1" @click="changeRoom(1)">Boardroom Booker</b-navbar-brand>
 
             <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 

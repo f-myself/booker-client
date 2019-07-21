@@ -287,7 +287,6 @@ export default {
                         break;
                     
                     case 'err_exists':
-                        console.log('exists');
                         this.status.variant = "danger";
                         this.status.msg = "Sorry, but user with this login or email already exists";
                         break;
@@ -304,8 +303,6 @@ export default {
                 }
             });
 
-            console.log('todo: sending method (this.submitUpdate())');
-            console.log(dataToSend);
             this.$bvModal.hide('modal-update');
         },
         submitUpdate: function() {

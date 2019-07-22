@@ -19,7 +19,7 @@
                     <tr :key="index" v-for="(week, index) in days">
                         <td :key="index" v-for="(day, index) in week">{{ day.dayNum }}
                             <b-list-group>
-                            <b-list-group-item :key="index" v-for="(event, index) in events" v-if="new Date(+event.startEvent).getDate() == day.dayNum" size="sm" variant="primary" class="mb-1 p-0 border-0 text-center event-badge" v-b-modal.my-modal @click="getEventById(index)"><small>
+                            <b-list-group-item style="background-color: #007bff; color: white; border-radius: .25rem; cursor: pointer;" :key="index" v-for="(event, index) in events" v-if="new Date(+event.startEvent).getDate() == day.dayNum" size="sm" variant="primary" class="mb-1 p-0 border-0 text-center event-badge" v-b-modal.my-modal @click="getEventById(index)"><small>
                                {{event.startHour}}:{{event.startMinutes}} {{event.ampmStart}} - {{event.endHour}}:{{event.endMinutes}} {{event.ampmEnd}}</small>
                             </b-list-group-item>
                             </b-list-group>
@@ -490,13 +490,6 @@ export default {
     font-weight: 700;
     text-align: center!important;
 
-}
-
-.event-badge {
-    background-color: #007bff;
-    color: white;
-    border-radius: .25rem;
-    cursor: pointer;
 }
 
 .event-badge:hover {

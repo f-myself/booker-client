@@ -264,8 +264,8 @@ export default {
 
             var dataToSend = this.dataToParamString(updateData);
 
-            // fetch('api/admin/', 
-            fetch('http://booker.loc/Server/app/api/admin/', 
+            fetch('api/admin/', 
+            // fetch('http://booker.loc/Server/app/api/admin/', 
             // fetch('http://192.168.0.15/~user6/booker/Server/app/api/admin/', 
             {method: "PUT", body: dataToSend})
             .then((response) => response.json())
@@ -349,8 +349,8 @@ export default {
             addFormData.append("token", localStorage.getItem("token"));
 
 
-            // fetch('api/admin/', 
-            fetch('http://booker.loc/Server/app/api/admin/', 
+            fetch('api/admin/', 
+            // fetch('http://booker.loc/Server/app/api/admin/', 
             // fetch('http://192.168.0.15/~user6/booker/Server/app/api/admin/', 
             {method: "POST", body: addFormData})
             .then((response) => response.json())
@@ -403,8 +403,8 @@ export default {
         },
         deleteUser: function() {
             var userId = this.users[this.selectedUser].id;
-            // fetch('api/admin/' + userId + '/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
-            fetch('http://booker.loc/Server/app/api/admin/' + userId + '/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"),
+            fetch('api/admin/' + userId + '/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
+            // fetch('http://booker.loc/Server/app/api/admin/' + userId + '/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"),
             // fetch('http://192.168.0.15/~user6/booker/Server/app/api/admin/' + userId + '/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"),
             {method: "DELETE"})
             .then((response) => response.json())
@@ -434,8 +434,8 @@ export default {
             this.$bvModal.hide('modal-delete');
         },
         checkAdmin: function() {
-            // fetch('api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
-            fetch('http://booker.loc/Server/app/api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
+            fetch('api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
+            // fetch('http://booker.loc/Server/app/api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
             // fetch('http://192.168.0.15/~user6/booker/Server/app/api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
             {method: "GET"})
             .then((response) => response.json())
@@ -456,8 +456,8 @@ export default {
         getUsers: function() {
             let id = localStorage.getItem("id");
             let token = localStorage.getItem("token");
-            // fetch('api/admin/' + id + '/' + token, 
-            fetch('http://booker.loc/Server/app/api/admin/' + id + '/' + token, 
+            fetch('api/admin/' + id + '/' + token, 
+            // fetch('http://booker.loc/Server/app/api/admin/' + id + '/' + token, 
             // fetch('http://192.168.0.15/~user6/booker/Server/app/api/admin/' + id + '/' + token,
             {method: "GET"})
             .then((response) => response.json())

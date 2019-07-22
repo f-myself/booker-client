@@ -235,8 +235,8 @@ export default {
             this.getEvents();
         },
         getEvents: function() {
-            // fetch('api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + (this.selectedMonth + 1), 
-            fetch('http://booker.loc/Server/app/api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + (this.selectedMonth + 1), 
+            fetch('api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + (this.selectedMonth + 1), 
+            // fetch('http://booker.loc/Server/app/api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + (this.selectedMonth + 1), 
             // fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/' + this.$route.params.id + '/' + this.selectedYear + '/' + (this.selectedMonth + 1),
             {method: "GET"})
             .then((response) => response.json())
@@ -296,8 +296,8 @@ export default {
         },
         checkAdmin: function() {
             var result = 
-            // fetch('api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
-            fetch('http://booker.loc/Server/app/api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
+            fetch('api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
+            // fetch('http://booker.loc/Server/app/api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
             // fetch('http://192.168.0.15/~user6/booker/Server/app/api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
             {method: "GET"})
             .then((response) => response.json())
@@ -340,8 +340,8 @@ export default {
                     var eventId = this.events[this.selectedEvent].id;
                 }
 
-                // fetch('api/events/' + eventId + '/all/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
-                fetch('http://booker.loc/Server/app/api/events/' + eventId + '/all/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"),
+                fetch('api/events/' + eventId + '/all/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
+                // fetch('http://booker.loc/Server/app/api/events/' + eventId + '/all/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"),
                 // fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/' + eventId + '/all/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"),
                 {method: "DELETE"})
                 .then((response) => response.json())
@@ -370,8 +370,8 @@ export default {
                     }
                 });
             } else {
-                // fetch('api/events/' + this.events[this.selectedEvent].id + '/single/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
-                fetch('http://booker.loc/Server/app/api/events/' + this.events[this.selectedEvent].id + '/single/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"),
+                fetch('api/events/' + this.events[this.selectedEvent].id + '/single/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
+                // fetch('http://booker.loc/Server/app/api/events/' + this.events[this.selectedEvent].id + '/single/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"),
                 // fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/' + this.events[this.selectedEvent].id + '/single/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"),
                 {method: "DELETE"})
                 .then((response) => response.json())
@@ -400,8 +400,8 @@ export default {
                     }
                 });
             }
-            this.getEvents();
             this.$bvModal.hide('delete-modal');
+            this.getEvents();
         }
     },
 

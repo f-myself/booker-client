@@ -28,7 +28,7 @@
 <script>
 export default {
     name: "navBar",
-    data: () => {
+    data: function() {
         return {
             username: localStorage.getItem("login"),
             logoutData: {
@@ -44,7 +44,7 @@ export default {
             this.logoutData.operation = "logout";
       
 	        var string= '';
-	        for(let val in data){
+	        for(var val in data){
 		        string += val + '=' + encodeURIComponent(data[val]) + '&' 
 	        }
   	        return string;
@@ -52,19 +52,19 @@ export default {
 
         logout: function(){
             localStorage.clear();
-            let str = this.dataToParamString(this.logoutData);
+            var str = this.dataToParamString(this.logoutData);
 
 
-            // fetch('api/auth/', 
-            fetch('http://booker.loc/Server/app/api/auth/', 
+            fetch('api/auth/', 
+            // fetch('http://booker.loc/Server/app/api/auth/', 
             // fetch('http://192.168.0.15/~user6/booker/Server/app/api/auth/', 
             {method: "PUT",  body: str})
             
             location.reload();
         },
         getRooms: function() {
-             // fetch('api/rooms/', 
-            fetch('http://booker.loc/Server/app/api/rooms/', 
+            fetch('api/rooms/', 
+            // fetch('http://booker.loc/Server/app/api/rooms/', 
             // fetch('http://192.168.0.15/~user6/booker/Server/app/api/rooms/',
             {method: "GET"})
             .then((response) => response.json())
@@ -84,7 +84,7 @@ export default {
         }
     },
     created: function() {
-        this.getRooms();
+        this.getRooms()
     }    
 }
 </script>

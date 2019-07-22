@@ -188,8 +188,8 @@ export default {
         },
         checkAdmin: function() {
             var result = 
-            // fetch('api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
-            fetch('http://booker.loc/Server/app/api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
+            fetch('api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
+            // fetch('http://booker.loc/Server/app/api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
             // fetch('http://192.168.0.15/~user6/booker/Server/app/api/auth/' + localStorage.getItem("id") + '/' + localStorage.getItem("token"), 
             {method: "GET"})
             .then((response) => response.json())
@@ -212,8 +212,8 @@ export default {
             let role = localStorage.getItem("role");
             if (role == 1){
             let token = localStorage.getItem("token");
-            // fetch('api/admin/' + id + '/' + token, 
-            fetch('http://booker.loc/Server/app/api/admin/' + id + '/' + token, 
+            fetch('api/admin/' + id + '/' + token, 
+            // fetch('http://booker.loc/Server/app/api/admin/' + id + '/' + token, 
             // fetch('http://192.168.0.15/~user6/booker/Server/app/api/admin/' + id + '/' + token,
             {method: "GET"})
             .then((response) => response.json())
@@ -229,8 +229,8 @@ export default {
                 }
             });
             } else {
-            // fetch('api/users/' + id, 
-            fetch('http://booker.loc/Server/app/api/users/' + id, 
+            fetch('api/users/' + id, 
+            // fetch('http://booker.loc/Server/app/api/users/' + id, 
             // fetch('http://192.168.0.15/~user6/booker/Server/app/api/users/' + id, 
             {method: "GET"})
             .then((response) => response.json())
@@ -254,8 +254,8 @@ export default {
             }
         },
         getEvent: function() {
-            // fetch('api/events/' + this.$route.params.id, 
-            fetch('http://booker.loc/Server/app/api/events/' + this.$route.params.id, 
+            fetch('api/events/' + this.$route.params.id, 
+            // fetch('http://booker.loc/Server/app/api/events/' + this.$route.params.id, 
             // fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/' + this.$route.params.id, 
             {method: "GET"})
             .then((response) => response.json())
@@ -345,8 +345,8 @@ export default {
 
             var sendingData = this.dataToParamString(dataForm);
 
-            // fetch('api/events/', 
-            fetch('http://booker.loc/Server/app/api/events/',
+            fetch('api/events/', 
+            // fetch('http://booker.loc/Server/app/api/events/',
             // fetch('http://192.168.0.15/~user6/booker/Server/app/api/events/', 
             {method: "PUT",  body: sendingData})
             .then((response) => response.json())
